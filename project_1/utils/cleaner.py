@@ -1,15 +1,14 @@
 import pandas as pd
 from datetime import datetime
+import re
 
 
 def clean_anime_data(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
-
     df.drop_duplicates(inplace=True)
-    df.dropna(subset=["score", "rating", "season", "year"],inplace=True)
+    df.dropna(subset=["score", "rating"],inplace=True)
 
-    df["start_date", "end_date"] = df['duration'].apply(extract_dates)
-
+    df = extract_dates(df)
     return df
 
 
@@ -33,7 +32,7 @@ def data_parsing(df: pd.DataFrame) -> pd.DataFrame:
     columns_order = [
         "mal_id", "url", "trailer", "title", "title_japanese", "type",
         "source", "episodes", "status", "aired", "duration", "rating",
-        "score", "members", "favorites", "season", "year", "genres"
+        "score", "members", "favorites", "genres"
     ]
 
     final_columns = [col for col in columns_order if col in df.columns]
@@ -41,14 +40,17 @@ def data_parsing(df: pd.DataFrame) -> pd.DataFrame:
     return df[final_columns]
 
 
+def extract_dates(df: pd.DataFrame) -> pd.DataFrame:
+    df["start_date_dt"] = pd.to_datetime(
+        df['aired'],
+        format="%b %d, %Y",
+        errors='coerce'     
+    )
+    df["start_date"] = (
+        df["start_date_dt"]
+        .dt.strftime("%d.%m.%Y")
+        .replace('NaT', None)
+    )
 
-
-def extract_dates(s):
-    import re
-
-    dates = re.findall(r'([A-Za-z]{3} \d{1,2}, \d{4})', s)
-    if len(dates) == 2:
-        start = datetime.strftime(dates[0], "%b %d, %Y").strftime("%d.%m.%Y")
-        end = datetime.strftime(dates[1], "%b %d, %Y").strftime("%d.%m.%Y")
-        return pd.Series([start, end])
-    return pd.Series([None, None])
+    df = df.drop(columns=['start_date_dt'], errors='ignore')
+    return df

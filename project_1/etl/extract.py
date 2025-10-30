@@ -38,7 +38,6 @@ def extract_data(RAW_PATH: Path, URL: str):
     log.info(f"Saving data to {RAW_PATH}")
     file_path = f"{RAW_PATH}/{date.today().strftime("%Y-%m-%d")}.json"
     pd.DataFrame(response["data"]).to_json(file_path, orient="records",indent=4, force_ascii=False)
-
     log.info(f"Data saved to {RAW_PATH}")
 
     return Path(file_path)
