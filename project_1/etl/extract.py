@@ -20,8 +20,8 @@ def extract_data(RAW_PATH: Path, URL: str):
 
     log.info(f"Extracting pages from {URL}")
     page = 1
-    while response["pagination"]["has_next_page"] and page < 5:
-        time.sleep(0.5)
+    while response["pagination"]["has_next_page"] and page < 3:
+        # time.sleep(0.5)
         if "?" in URL:
             response_page = requests.get(f"{URL}&page={response["pagination"]["current_page"] + 1}")
         else:
@@ -40,3 +40,5 @@ def extract_data(RAW_PATH: Path, URL: str):
     pd.DataFrame(response["data"]).to_json(file_path, orient="records",indent=4, force_ascii=False)
 
     log.info(f"Data saved to {RAW_PATH}")
+
+    return Path(file_path)

@@ -1,4 +1,5 @@
 from etl.extract import extract_data
+from etl.transform import transform_data
 from pathlib import Path
 import os
 
@@ -14,6 +15,7 @@ URL = str(os.environ.get('URL'))
 
 
 def run_pipeline():
-    return extract_data(RAW_PATH=RAW_PATH, URL=URL)
+    raw_file_path = extract_data(RAW_PATH=RAW_PATH, URL=URL)
+    transform_data(raw_file_path=raw_file_path)
 
 print(run_pipeline())
