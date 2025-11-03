@@ -20,8 +20,8 @@ def extract_data(RAW_PATH: Path, URL: str):
 
     log.info(f"Extracting pages from {URL}")
     page = 1
-    while response["pagination"]["has_next_page"] and page < 3:
-        # time.sleep(0.5)
+    while response["pagination"]["has_next_page"] and page < 50:
+        time.sleep(0.5)
         if "?" in URL:
             response_page = requests.get(f"{URL}&page={response["pagination"]["current_page"] + 1}")
         else:
@@ -32,11 +32,13 @@ def extract_data(RAW_PATH: Path, URL: str):
 
         response["data"] += response_page["data"]
         response["pagination"]["has_next_page"] = response_page["pagination"]["has_next_page"]
+        response["pagination"]["current_page"] = response_page["pagination"]["current_page"]
         page += 1
+
     log.info(f"Extracted {page} pages from {URL}")
 
     log.info(f"Saving data to {RAW_PATH}")
-    file_path = f"{RAW_PATH}/{date.today().strftime("%Y-%m-%d")}.json"
+    file_path = f"{RAW_PATH}/{date.today().strftime("%Y-%m-%d %H-%M-%S")}.json"
     pd.DataFrame(response["data"]).to_json(file_path, orient="records",indent=4, force_ascii=False)
     log.info(f"Data saved to {RAW_PATH}")
 

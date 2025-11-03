@@ -44,7 +44,7 @@ def extract_dates(df: pd.DataFrame) -> pd.DataFrame:
     df["start_date_dt"] = pd.to_datetime(
         df['aired'],
         format="%b %d, %Y",
-        errors='coerce'     
+        errors='coerce'
     )
     df["start_date"] = (
         df["start_date_dt"]

@@ -22,7 +22,7 @@ def run_pipeline():
     log.info("Starting ETL pipeline")
     raw_file_path = extract_data(RAW_PATH=RAW_PATH, URL=URL)
     if not raw_file_path:
-        log.info("❌ Extraction failed")
+        log.info("Extraction failed")
         return
     df = transform_data(raw_file_path=raw_file_path)
     output = load_data(output_data=df, PROCESSED_PATH=PRCESSED_PATH)
