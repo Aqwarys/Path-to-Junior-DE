@@ -12,14 +12,25 @@ def data_cleaning(file_path: Path) -> pd.DataFrame:
     df = pd.read_json(file_path, orient="records", encoding='utf-8')
     df = data_parsing(df)
     df.drop_duplicates(inplace=True)
-    df.dropna(subset=["score", "rating"], inplace=True)
+    df.dropna(subset=["score", "rating", "episodes"], inplace=True)
+    try:
+        # Extracting year from aired and converting it to int
+        df["year"] = df["aired"].str.extract(r"(\d{4})").astype("Int64")
+        # Converting episodes to int, title and title_japanese to string
+        df = df.astype({
+            "episodes": "Int64",
+            "title": "string",
+            "title_japanese": "string",
+        })
 
+
+    except Exception as e:
+        log.info(f"Error: {e}")
     return df
 
 
 
 def data_parsing(df: pd.DataFrame) -> pd.DataFrame:
-
 
     df["trailer"] = df["trailer"].apply(
         lambda x: x.get("embed_url") if isinstance(x, dict) else None
