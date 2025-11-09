@@ -24,6 +24,8 @@ def data_cleaning(file_path: Path) -> pd.DataFrame:
             "title_japanese": "string",
         })
 
+        df = data_validation(df)
+
 
     except Exception as e:
         log.info(f"Error: {e}")
@@ -58,3 +60,14 @@ def data_parsing(df: pd.DataFrame) -> pd.DataFrame:
     return df[final_columns]
 
 
+def data_validation(df: pd.DataFrame) -> pd.DataFrame:
+    invalid_score = df[(df["score"] < 0) | (df["score"] > 10)]
+    invalid_episodes = df[df["episodes"] < 0]
+
+    if not invalid_score.empty:
+        log.info(f"Invalid score: {invalid_score}")
+        df.drop(invalid_score.index, inplace=True)
+    if not invalid_episodes.empty:
+        log.info(f"Invalid episodes: {invalid_episodes}")
+        df.drop(invalid_episodes.index, inplace=True)
+    return df
