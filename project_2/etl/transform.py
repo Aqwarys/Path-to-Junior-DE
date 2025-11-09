@@ -16,6 +16,7 @@ def data_cleaning(file_path: Path) -> pd.DataFrame:
     try:
         # Extracting year from aired and converting it to int
         df["year"] = df["aired"].str.extract(r"(\d{4})").astype("Int64")
+        df["popularity_score"] = df["score"] * (df["members"] / 10000)
         # Converting episodes to int, title and title_japanese to string
         df = df.astype({
             "episodes": "Int64",
@@ -55,3 +56,5 @@ def data_parsing(df: pd.DataFrame) -> pd.DataFrame:
     final_columns = [col for col in columns_order if col in df.columns]
 
     return df[final_columns]
+
+

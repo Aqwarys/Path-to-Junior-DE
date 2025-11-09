@@ -26,7 +26,7 @@ if csv_files:
     logging.info(f"Saving data to {PROCESSED / f'{file_name}'}")
     if not PROCESSED.exists():
         logging.info(f"Creating {PROCESSED} directory cause it doesn't exist")
-        PROCESSED.mkdir()
+        PROCESSED.mkdir(parents=True, exist_ok=True)
     df.to_csv(PROCESSED / f'{file_name}', index=False)
     logging.info(f"Data saved to {PROCESSED / f'{file_name}'}")
 
