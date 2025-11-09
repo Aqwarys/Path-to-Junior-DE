@@ -71,3 +71,17 @@ def data_validation(df: pd.DataFrame) -> pd.DataFrame:
         log.info(f"Invalid episodes: {invalid_episodes}")
         df.drop(invalid_episodes.index, inplace=True)
     return df
+
+
+def aggregate_by_type_year(df: pd.DataFrame) -> pd.DataFrame:
+    agg_df = (
+        df.groupby(["type", "year"])
+            .agg(
+                avg_score=("score", "mean"),
+                total_members=("members", "sum"),
+                shows_count=("mal_id", "count"),
+            )
+            .reset_index()
+    )
+
+    return agg_df
